@@ -17,6 +17,10 @@
 #include "storage/ipc.h"
 #include "utils/builtins.h"
 #include "utils/guc.h"
+#if defined(PG_VERSION_NUM) && PG_VERSION_NUM >= 90400
+#define FuncnameGetCandidates(names, nargs, argnames, expand_variadic, expand_defaults) FuncnameGetCandidates(names, nargs, argnames, expand_variadic, expand_defaults, true)
+#endif
+
 
 PG_MODULE_MAGIC;
 
@@ -37,7 +41,7 @@ exec_function(char *funcname)
 	List *names;
 
 	names = stringToQualifiedNameList(funcname);
-	clist = FuncnameGetCandidates(names, 0, NIL, false, false, true);
+	clist = FuncnameGetCandidates(names, 0, NIL, false, false);
 
 	if (clist == NULL)
 		elog(WARNING, "function \"%s()\" does not exist", funcname);
